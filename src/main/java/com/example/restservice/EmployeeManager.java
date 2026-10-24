@@ -1,9 +1,10 @@
 package com.example.restservice;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Component;
 
-/** Initializes and holds 4 hard-coded employees (no database for Task Two). */
+/** Keeps employee records in memory for the duration of the running application. */
 @Component
 public class EmployeeManager {
     private final Employees employees = new Employees();
@@ -17,7 +18,15 @@ public class EmployeeManager {
         ));
     }
 
-    public Employees getEmployees() {
+    public synchronized Employees getEmployees() {
         return employees;
+    }
+
+    /** Adds a new employee to an updated snapshot of the in-memory list. */
+    public synchronized Employee addEmployee(Employee employee) {
+        List<Employee> updated = new ArrayList<>(employees.getEmployees());
+        updated.add(employee);
+        employees.setEmployees(updated);
+        return employee;
     }
 }
